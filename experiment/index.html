@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>HumanEval_revision_experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-fullscreen.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script>
+    <script src="jspsych/plugin-canvas-button-response.js"></script>
+    <script src="jspsych/plugin-canvas-slider-response.js"></script>
+    <script src="jspsych/plugin-html-slider-response.js"></script>
+    <script src="jspsych/plugin-external-html.js"></script>
+    <script src="jspsych/plugin-survey-html-form.js"></script>
+    <script src="jspsych/plugin-survey-multi-choice.js"></script>
+    <script src="jspsych/plugin-survey-text.js"></script>
+    <script src="jspsych/plugin-image-slider-response.js"></script>
+    <script src="jspsych/saveData_function.js"></script>
+    <script src="stimuli/training_trials/training_trials.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@0.2.2/css/survey.css">
+
+<style>
+  /* Make the slider thumb green across browsers */
+  input[type=range]::-webkit-slider-thumb {
+    background-color: green;
+    border: none;
+  }
+
+  input[type=range]::-moz-range-thumb {
+    background-color: green;
+    border: none;
+  }
+
+  input[type=range]::-ms-thumb {
+    background-color: green;
+    border: none;
+  }
+</style>
+
+</head>
+
+  <body></body>
+  <script>
+
+
+
+
+async function main () {
+
+var jsPsych = initJsPsych({
+minimum_valid_rt: 1000,
+// Here I am defining that participants are redirected to Prolific at the very end of the study.
+on_finish: function(){
+window.location.href = "https://app.prolific.com/submissions/complete?cc=CPPY5SED"
+}
+});
+
+/** All IDs will show as undefined if only using the link, without the ?VARS at the end */
+
+  var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+  var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+  var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+
+  // Global variable to hold consent status
+  var participantConsentStatus = null;
+
+  var check_consent = function(elem) {
+            if (!document.getElementById('read_consent').checked) {
+                alert("Please indicate that you have read the consent form.");
+                return false;
+            }
+            if (!document.getElementById('consent_checkbox').checked && !document.getElementById('no_consent_checkbox').checked) {
+                alert("Please indicate whether you consent to participate or not.");
+                return false;
+            }
+            if (document.getElementById('no_consent_checkbox').checked) {
+                participantConsentStatus = "Participant does not consent and is redirected";
+
+                // Redirect to Prolific or any other action for non-consenting participants
+                window.location.href = "https://app.prolific.com/submissions/complete?cc=CRFULP6Y";
+                return false;
+            }
+            participantConsentStatus = "Participant has read consent form and consents to study participation.";
+            return true;
+        };
+
+    var consent = {
+    type: jsPsychExternalHtml,
+    url: 'stimuli/consent_form/EXTERNAL_CONSENT_PAGE.HTML',
+    cont_btn: 'continue_button',
+    check_fn: check_consent,
+    on_finish: function() {
+        // Log consent status
+        jsPsych.data.get().last(1).addToAll({
+            consent_status: participantConsentStatus,
+            consent_button_press1: "I have read the above consent form",
+            consent_button_press2: "I consent"
+        });
+
+      }
+    };
+
+  // I am defining the images used for instructions here to be able to preload them below
+  var instru_images = [
+    'stimuli/instructions/parachute-jellyfish-03.jpg',
+    'stimuli/instructions/o-parachute_1.jpg',
+    'stimuli/instructions/ILSVRC2012_val_00048710.JPEG',
+    'stimuli/instructions/ILSVRC2012_val_00037611.JPEG',
+
+    ]
+   // I am defining the images used for training here, so that I can easily preload them
+
+   var training_trials_images = [
+  "stimuli/training_trials/n02971356_3813.JPEG",
+  "stimuli/training_trials/n02966687_5607.JPEG",
+  "stimuli/training_trials/n02877765_7633.JPEG",
+  "stimuli/training_trials/n02877765_5557.JPEG",
+  "stimuli/training_trials/n02782093_42647.JPEG",
+  "stimuli/training_trials/n02782093_5972.JPEG",
+  "stimuli/training_trials/n01910747_844.JPEG",
+  "stimuli/training_trials/n01910747_981.JPEG",
+  "stimuli/training_trials/n01882714_10816.JPEG",
+  "stimuli/training_trials/n01871265_664.JPEG",
+  "stimuli/training_trials/n01443537_22563.JPEG",
+  "stimuli/training_trials/n01693334_9180.JPEG"
+];
+
+
+var experiment_trials_images = [
+  "stimuli/images_revision/n01494475_17410.JPEG",
+  "stimuli/images_revision/n01494475_9428.JPEG",
+  "stimuli/images_revision/n01531178_4907.JPEG",
+  "stimuli/images_revision/n01531178_9703.JPEG",
+  "stimuli/images_revision/n01560419_123.JPEG",
+  "stimuli/images_revision/n01560419_4540.JPEG",
+  "stimuli/images_revision/n01592084_5739.JPEG",
+  "stimuli/images_revision/n01592084_8106.JPEG",
+  "stimuli/images_revision/n01632458_2761.JPEG",
+  "stimuli/images_revision/n01632458_7518.JPEG",
+  "stimuli/images_revision/n01739381_8323.JPEG",
+  "stimuli/images_revision/n01739381_9834.JPEG",
+  "stimuli/images_revision/n01775062_8465.JPEG",
+  "stimuli/images_revision/n01775062_8824.JPEG",
+  "stimuli/images_revision/n01833805_11108.JPEG",
+  "stimuli/images_revision/n01833805_23744.JPEG",
+  "stimuli/images_revision/n01930112_18063.JPEG",
+  "stimuli/images_revision/n01930112_19184.JPEG",
+  "stimuli/images_revision/n01943899_16388.JPEG",
+  "stimuli/images_revision/n01943899_20459.JPEG",
+  "stimuli/images_revision/n02089867_424.JPEG",
+  "stimuli/images_revision/n02089867_8147.JPEG",
+  "stimuli/images_revision/n02096294_4162.JPEG",
+  "stimuli/images_revision/n02096294_6393.JPEG",
+  "stimuli/images_revision/n02107574_560.JPEG",
+  "stimuli/images_revision/n02107574_778.JPEG",
+  "stimuli/images_revision/n02117135_1302.JPEG",
+  "stimuli/images_revision/n02117135_4940.JPEG",
+  "stimuli/images_revision/n02125311_45953.JPEG",
+  "stimuli/images_revision/n02125311_76311.JPEG",
+  "stimuli/images_revision/n02129165_23847.JPEG",
+  "stimuli/images_revision/n02129165_7913.JPEG",
+  "stimuli/images_revision/n02132136_28335.JPEG",
+  "stimuli/images_revision/n02132136_33657.JPEG",
+  "stimuli/images_revision/n02231487_2265.JPEG",
+  "stimuli/images_revision/n02231487_3193.JPEG",
+  "stimuli/images_revision/n02319095_22666.JPEG",
+  "stimuli/images_revision/n02319095_232.JPEG",
+  "stimuli/images_revision/n02328150_112.JPEG",
+  "stimuli/images_revision/n02328150_6221.JPEG",
+  "stimuli/images_revision/n02356798_2508.JPEG",
+  "stimuli/images_revision/n02356798_4561.JPEG",
+  "stimuli/images_revision/n02361337_144.JPEG",
+  "stimuli/images_revision/n02361337_7701.JPEG",
+  "stimuli/images_revision/n02408429_16723.JPEG",
+  "stimuli/images_revision/n02408429_666.JPEG",
+  "stimuli/images_revision/n02437616_17.JPEG",
+  "stimuli/images_revision/n02437616_2362.JPEG",
+  "stimuli/images_revision/n02442845_1297.JPEG",
+  "stimuli/images_revision/n02442845_4826.JPEG",
+  "stimuli/images_revision/n02489166_3525.JPEG",
+  "stimuli/images_revision/n02489166_9752.JPEG",
+  "stimuli/images_revision/n02493793_6405.JPEG",
+  "stimuli/images_revision/n02493793_8364.JPEG",
+  "stimuli/images_revision/n02676566_15152.JPEG",
+  "stimuli/images_revision/n02676566_6260.JPEG",
+  "stimuli/images_revision/n02690373_10423.JPEG",
+  "stimuli/images_revision/n02690373_283.JPEG",
+  "stimuli/images_revision/n02701002_22415.JPEG",
+  "stimuli/images_revision/n02701002_7445.JPEG",
+  "stimuli/images_revision/n02708093_145.JPEG",
+  "stimuli/images_revision/n02708093_4267.JPEG",
+  "stimuli/images_revision/n02708093_443.JPEG",
+  "stimuli/images_revision/n02708093_4553.JPEG",
+  "stimuli/images_revision/n02747177_27593.JPEG",
+  "stimuli/images_revision/n02747177_29325.JPEG",
+  "stimuli/images_revision/n02769748_1319.JPEG",
+  "stimuli/images_revision/n02769748_6483.JPEG",
+  "stimuli/images_revision/n02776631_21860.JPEG",
+  "stimuli/images_revision/n02776631_246.JPEG",
+  "stimuli/images_revision/n02782093_1535.JPEG",
+  "stimuli/images_revision/n02782093_38268.JPEG",
+  "stimuli/images_revision/n02786058_10847.JPEG",
+  "stimuli/images_revision/n02786058_1833.JPEG",
+  "stimuli/images_revision/n02795169_19321.JPEG",
+  "stimuli/images_revision/n02795169_29988.JPEG",
+  "stimuli/images_revision/n02799071_2055.JPEG",
+  "stimuli/images_revision/n02799071_39180.JPEG",
+  "stimuli/images_revision/n02808304_17563.JPEG",
+  "stimuli/images_revision/n02808304_8053.JPEG",
+  "stimuli/images_revision/n02808440_32236.JPEG",
+  "stimuli/images_revision/n02808440_8792.JPEG",
+  "stimuli/images_revision/n02815834_306.JPEG",
+  "stimuli/images_revision/n02815834_5737.JPEG",
+  "stimuli/images_revision/n02834397_19623.JPEG",
+  "stimuli/images_revision/n02834397_6013.JPEG",
+  "stimuli/images_revision/n02834397_609.JPEG",
+  "stimuli/images_revision/n02834397_7125.JPEG",
+  "stimuli/images_revision/n02837789_13442.JPEG",
+  "stimuli/images_revision/n02837789_6264.JPEG",
+  "stimuli/images_revision/n02840245_1168.JPEG",
+  "stimuli/images_revision/n02840245_5364.JPEG",
+  "stimuli/images_revision/n02840245_7031.JPEG",
+  "stimuli/images_revision/n02840245_8308.JPEG",
+  "stimuli/images_revision/n02841315_12954.JPEG",
+  "stimuli/images_revision/n02841315_27229.JPEG",
+  "stimuli/images_revision/n02877765_10667.JPEG",
+  "stimuli/images_revision/n02877765_16369.JPEG",
+  "stimuli/images_revision/n02879718_36638.JPEG",
+  "stimuli/images_revision/n02879718_8403.JPEG",
+  "stimuli/images_revision/n02892201_18148.JPEG",
+  "stimuli/images_revision/n02892201_68232.JPEG",
+  "stimuli/images_revision/n02910353_10783.JPEG",
+  "stimuli/images_revision/n02910353_8043.JPEG",
+  "stimuli/images_revision/n02927161_42490.JPEG",
+  "stimuli/images_revision/n02927161_792.JPEG",
+  "stimuli/images_revision/n02951358_35002.JPEG",
+  "stimuli/images_revision/n02951358_4354.JPEG",
+  "stimuli/images_revision/n02966687_4132.JPEG",
+  "stimuli/images_revision/n02966687_8049.JPEG",
+  "stimuli/images_revision/n02971356_2341.JPEG",
+  "stimuli/images_revision/n02971356_9654.JPEG",
+  "stimuli/images_revision/n02978881_12127.JPEG",
+  "stimuli/images_revision/n02978881_9853.JPEG",
+  "stimuli/images_revision/n02980441_2580.JPEG",
+  "stimuli/images_revision/n02980441_30555.JPEG",
+  "stimuli/images_revision/n03000134_2406.JPEG",
+  "stimuli/images_revision/n03000134_2550.JPEG",
+  "stimuli/images_revision/n03026506_1403.JPEG",
+  "stimuli/images_revision/n03026506_9519.JPEG",
+  "stimuli/images_revision/n03041632_126.JPEG",
+  "stimuli/images_revision/n03041632_56172.JPEG",
+  "stimuli/images_revision/n03045698_1105.JPEG",
+  "stimuli/images_revision/n03045698_935.JPEG",
+  "stimuli/images_revision/n03062245_1974.JPEG",
+  "stimuli/images_revision/n03062245_5468.JPEG",
+  "stimuli/images_revision/n03075370_17061.JPEG",
+  "stimuli/images_revision/n03075370_2099.JPEG",
+  "stimuli/images_revision/n03089624_31684.JPEG",
+  "stimuli/images_revision/n03089624_50118.JPEG",
+  "stimuli/images_revision/n03124043_1713.JPEG",
+  "stimuli/images_revision/n03124043_2857.JPEG",
+  "stimuli/images_revision/n03124043_6264.JPEG",
+  "stimuli/images_revision/n03124043_902.JPEG",
+  "stimuli/images_revision/n03124170_10673.JPEG",
+  "stimuli/images_revision/n03124170_5215.JPEG",
+  "stimuli/images_revision/n03127925_10053.JPEG",
+  "stimuli/images_revision/n03127925_6454.JPEG",
+  "stimuli/images_revision/n03141823_5973.JPEG",
+  "stimuli/images_revision/n03141823_7590.JPEG",
+  "stimuli/images_revision/n03146219_25934.JPEG",
+  "stimuli/images_revision/n03146219_9451.JPEG",
+  "stimuli/images_revision/n03179701_2117.JPEG",
+  "stimuli/images_revision/n03179701_4853.JPEG",
+  "stimuli/images_revision/n03208938_19057.JPEG",
+  "stimuli/images_revision/n03208938_9504.JPEG",
+  "stimuli/images_revision/n03223299_22775.JPEG",
+  "stimuli/images_revision/n03223299_7378.JPEG",
+  "stimuli/images_revision/n03255030_20938.JPEG",
+  "stimuli/images_revision/n03255030_2375.JPEG",
+  "stimuli/images_revision/n03272562_11105.JPEG",
+  "stimuli/images_revision/n03272562_2050.JPEG",
+  "stimuli/images_revision/n03297495_1861.JPEG",
+  "stimuli/images_revision/n03297495_5210.JPEG",
+  "stimuli/images_revision/n03314780_4690.JPEG",
+  "stimuli/images_revision/n03314780_7552.JPEG",
+  "stimuli/images_revision/n03344393_5668.JPEG",
+  "stimuli/images_revision/n03344393_6577.JPEG",
+  "stimuli/images_revision/n03347037_27893.JPEG",
+  "stimuli/images_revision/n03347037_30852.JPEG",
+  "stimuli/images_revision/n03355925_15090.JPEG",
+  "stimuli/images_revision/n03355925_7712.JPEG",
+  "stimuli/images_revision/n03388043_3293.JPEG",
+  "stimuli/images_revision/n03388043_6674.JPEG",
+  "stimuli/images_revision/n03393912_1055.JPEG",
+  "stimuli/images_revision/n03393912_1491.JPEG",
+  "stimuli/images_revision/n03404251_11973.JPEG",
+  "stimuli/images_revision/n03404251_1685.JPEG",
+  "stimuli/images_revision/n03417042_13729.JPEG",
+  "stimuli/images_revision/n03417042_6888.JPEG",
+  "stimuli/images_revision/n03445777_3023.JPEG",
+  "stimuli/images_revision/n03445777_4070.JPEG",
+  "stimuli/images_revision/n03447721_26918.JPEG",
+  "stimuli/images_revision/n03447721_46960.JPEG",
+  "stimuli/images_revision/n03478589_17203.JPEG",
+  "stimuli/images_revision/n03478589_9857.JPEG",
+  "stimuli/images_revision/n03482405_26623.JPEG",
+  "stimuli/images_revision/n03482405_27460.JPEG",
+  "stimuli/images_revision/n03492542_14601.JPEG",
+  "stimuli/images_revision/n03492542_17902.JPEG",
+  "stimuli/images_revision/n03530642_12099.JPEG",
+  "stimuli/images_revision/n03530642_2807.JPEG",
+  "stimuli/images_revision/n03538406_10714.JPEG",
+  "stimuli/images_revision/n03538406_1308.JPEG",
+  "stimuli/images_revision/n03544143_4970.JPEG",
+  "stimuli/images_revision/n03544143_5448.JPEG",
+  "stimuli/images_revision/n03584829_33522.JPEG",
+  "stimuli/images_revision/n03584829_34641.JPEG",
+  "stimuli/images_revision/n03594734_10857.JPEG",
+  "stimuli/images_revision/n03594734_28196.JPEG",
+  "stimuli/images_revision/n03595614_12795.JPEG",
+  "stimuli/images_revision/n03595614_14516.JPEG",
+  "stimuli/images_revision/n03598930_10079.JPEG",
+  "stimuli/images_revision/n03598930_10546.JPEG",
+  "stimuli/images_revision/n03598930_16512.JPEG",
+  "stimuli/images_revision/n03598930_5383.JPEG",
+  "stimuli/images_revision/n03633091_13292.JPEG",
+  "stimuli/images_revision/n03633091_7417.JPEG",
+  "stimuli/images_revision/n03642806_11746.JPEG",
+  "stimuli/images_revision/n03642806_3816.JPEG",
+  "stimuli/images_revision/n03649909_25196.JPEG",
+  "stimuli/images_revision/n03649909_7631.JPEG",
+  "stimuli/images_revision/n03657121_6749.JPEG",
+  "stimuli/images_revision/n03657121_7176.JPEG",
+  "stimuli/images_revision/n03658185_1675.JPEG",
+  "stimuli/images_revision/n03658185_20896.JPEG",
+  "stimuli/images_revision/n03673027_17432.JPEG",
+  "stimuli/images_revision/n03673027_23225.JPEG",
+  "stimuli/images_revision/n03676483_2277.JPEG",
+  "stimuli/images_revision/n03676483_8945.JPEG",
+  "stimuli/images_revision/n03759954_15525.JPEG",
+  "stimuli/images_revision/n03759954_17862.JPEG",
+  "stimuli/images_revision/n03769881_3630.JPEG",
+  "stimuli/images_revision/n03769881_4443.JPEG",
+  "stimuli/images_revision/n03786901_5481.JPEG",
+  "stimuli/images_revision/n03786901_8187.JPEG",
+  "stimuli/images_revision/n03788365_6088.JPEG",
+  "stimuli/images_revision/n03788365_9209.JPEG",
+  "stimuli/images_revision/n03794056_19582.JPEG",
+  "stimuli/images_revision/n03794056_1968.JPEG",
+  "stimuli/images_revision/n03804744_21749.JPEG",
+  "stimuli/images_revision/n03804744_8946.JPEG",
+  "stimuli/images_revision/n03825788_30429.JPEG",
+  "stimuli/images_revision/n03825788_9513.JPEG",
+  "stimuli/images_revision/n03837869_502.JPEG",
+  "stimuli/images_revision/n03837869_9835.JPEG",
+  "stimuli/images_revision/n03838899_32227.JPEG",
+  "stimuli/images_revision/n03838899_5735.JPEG",
+  "stimuli/images_revision/n03841143_14448.JPEG",
+  "stimuli/images_revision/n03841143_3366.JPEG",
+  "stimuli/images_revision/n03857828_67789.JPEG",
+  "stimuli/images_revision/n03857828_7840.JPEG",
+  "stimuli/images_revision/n03866082_11330.JPEG",
+  "stimuli/images_revision/n03866082_7578.JPEG",
+  "stimuli/images_revision/n03868242_13802.JPEG",
+  "stimuli/images_revision/n03868242_8456.JPEG",
+  "stimuli/images_revision/n03871628_16234.JPEG",
+  "stimuli/images_revision/n03871628_5736.JPEG",
+  "stimuli/images_revision/n03876231_11461.JPEG",
+  "stimuli/images_revision/n03876231_2973.JPEG",
+  "stimuli/images_revision/n03888257_10044.JPEG",
+  "stimuli/images_revision/n03888257_4179.JPEG",
+  "stimuli/images_revision/n03891332_3869.JPEG",
+  "stimuli/images_revision/n03891332_70.JPEG",
+  "stimuli/images_revision/n03899768_35157.JPEG",
+  "stimuli/images_revision/n03899768_37963.JPEG",
+  "stimuli/images_revision/n03908618_3088.JPEG",
+  "stimuli/images_revision/n03908618_6971.JPEG",
+  "stimuli/images_revision/n03920288_1496.JPEG",
+  "stimuli/images_revision/n03920288_4806.JPEG",
+  "stimuli/images_revision/n03924679_7447.JPEG",
+  "stimuli/images_revision/n03924679_8982.JPEG",
+  "stimuli/images_revision/n03929660_10538.JPEG",
+  "stimuli/images_revision/n03929660_22024.JPEG",
+  "stimuli/images_revision/n03929660_426.JPEG",
+  "stimuli/images_revision/n03929660_7007.JPEG",
+  "stimuli/images_revision/n03937543_766.JPEG",
+  "stimuli/images_revision/n03937543_9360.JPEG",
+  "stimuli/images_revision/n03944341_13527.JPEG",
+  "stimuli/images_revision/n03944341_5635.JPEG",
+  "stimuli/images_revision/n03950228_11161.JPEG",
+  "stimuli/images_revision/n03950228_6938.JPEG",
+  "stimuli/images_revision/n03954731_1061.JPEG",
+  "stimuli/images_revision/n03954731_33573.JPEG",
+  "stimuli/images_revision/n03958227_10573.JPEG",
+  "stimuli/images_revision/n03958227_11594.JPEG",
+  "stimuli/images_revision/n03970156_7016.JPEG",
+  "stimuli/images_revision/n03970156_9803.JPEG",
+  "stimuli/images_revision/n03976467_15872.JPEG",
+  "stimuli/images_revision/n03976467_5766.JPEG",
+  "stimuli/images_revision/n03977966_54335.JPEG",
+  "stimuli/images_revision/n03977966_64051.JPEG",
+  "stimuli/images_revision/n03991062_5148.JPEG",
+  "stimuli/images_revision/n03991062_560.JPEG",
+  "stimuli/images_revision/n03995372_18138.JPEG",
+  "stimuli/images_revision/n03995372_19939.JPEG",
+  "stimuli/images_revision/n03995372_9129.JPEG",
+  "stimuli/images_revision/n03995372_9508.JPEG",
+  "stimuli/images_revision/n04008634_2698.JPEG",
+  "stimuli/images_revision/n04008634_546.JPEG",
+  "stimuli/images_revision/n04019541_1476.JPEG",
+  "stimuli/images_revision/n04019541_20529.JPEG",
+  "stimuli/images_revision/n04019541_35276.JPEG",
+  "stimuli/images_revision/n04019541_5341.JPEG",
+  "stimuli/images_revision/n04026417_2237.JPEG",
+  "stimuli/images_revision/n04026417_24197.JPEG",
+  "stimuli/images_revision/n04041544_2730.JPEG",
+  "stimuli/images_revision/n04041544_31707.JPEG",
+  "stimuli/images_revision/n04065272_38896.JPEG",
+  "stimuli/images_revision/n04065272_40021.JPEG",
+  "stimuli/images_revision/n04069434_12120.JPEG",
+  "stimuli/images_revision/n04069434_4123.JPEG",
+  "stimuli/images_revision/n04070727_1565.JPEG",
+  "stimuli/images_revision/n04070727_32435.JPEG",
+  "stimuli/images_revision/n04090263_11525.JPEG",
+  "stimuli/images_revision/n04090263_9316.JPEG",
+  "stimuli/images_revision/n04118776_34973.JPEG",
+  "stimuli/images_revision/n04118776_59630.JPEG",
+  "stimuli/images_revision/n04127249_1742.JPEG",
+  "stimuli/images_revision/n04127249_8943.JPEG",
+  "stimuli/images_revision/n04131690_13765.JPEG",
+  "stimuli/images_revision/n04131690_8613.JPEG",
+  "stimuli/images_revision/n04141327_19266.JPEG",
+  "stimuli/images_revision/n04141327_9240.JPEG",
+  "stimuli/images_revision/n04162706_23557.JPEG",
+  "stimuli/images_revision/n04162706_40299.JPEG",
+  "stimuli/images_revision/n04179913_11745.JPEG",
+  "stimuli/images_revision/n04179913_46.JPEG",
+  "stimuli/images_revision/n04204238_4304.JPEG",
+  "stimuli/images_revision/n04204238_5833.JPEG",
+  "stimuli/images_revision/n04204347_4353.JPEG",
+  "stimuli/images_revision/n04204347_5952.JPEG",
+  "stimuli/images_revision/n04252225_14682.JPEG",
+  "stimuli/images_revision/n04252225_1606.JPEG",
+  "stimuli/images_revision/n04254680_1344.JPEG",
+  "stimuli/images_revision/n04254680_5301.JPEG",
+  "stimuli/images_revision/n04259630_16045.JPEG",
+  "stimuli/images_revision/n04259630_27398.JPEG",
+  "stimuli/images_revision/n04286575_14356.JPEG",
+  "stimuli/images_revision/n04286575_490.JPEG",
+  "stimuli/images_revision/n04311174_3209.JPEG",
+  "stimuli/images_revision/n04311174_9531.JPEG",
+  "stimuli/images_revision/n04332243_14513.JPEG",
+  "stimuli/images_revision/n04332243_41364.JPEG",
+  "stimuli/images_revision/n04371774_11964.JPEG",
+  "stimuli/images_revision/n04371774_14967.JPEG",
+  "stimuli/images_revision/n04372370_23966.JPEG",
+  "stimuli/images_revision/n04372370_41159.JPEG",
+  "stimuli/images_revision/n04376876_13059.JPEG",
+  "stimuli/images_revision/n04376876_5977.JPEG",
+  "stimuli/images_revision/n04392985_6656.JPEG",
+  "stimuli/images_revision/n04392985_9599.JPEG",
+  "stimuli/images_revision/n04404412_1945.JPEG",
+  "stimuli/images_revision/n04404412_8875.JPEG",
+  "stimuli/images_revision/n04409515_2917.JPEG",
+  "stimuli/images_revision/n04409515_7951.JPEG",
+  "stimuli/images_revision/n04423845_16665.JPEG",
+  "stimuli/images_revision/n04423845_22643.JPEG",
+  "stimuli/images_revision/n04476259_4858.JPEG",
+  "stimuli/images_revision/n04476259_9529.JPEG",
+  "stimuli/images_revision/n04505470_3286.JPEG",
+  "stimuli/images_revision/n04505470_713.JPEG",
+  "stimuli/images_revision/n04507155_17917.JPEG",
+  "stimuli/images_revision/n04507155_24195.JPEG",
+  "stimuli/images_revision/n04525305_11922.JPEG",
+  "stimuli/images_revision/n04525305_5056.JPEG",
+  "stimuli/images_revision/n04532106_10805.JPEG",
+  "stimuli/images_revision/n04532106_12280.JPEG",
+  "stimuli/images_revision/n04532106_3920.JPEG",
+  "stimuli/images_revision/n04532106_5730.JPEG",
+  "stimuli/images_revision/n04540053_1121.JPEG",
+  "stimuli/images_revision/n04540053_2205.JPEG",
+  "stimuli/images_revision/n04542943_1967.JPEG",
+  "stimuli/images_revision/n04542943_6916.JPEG",
+  "stimuli/images_revision/n04548362_10223.JPEG",
+  "stimuli/images_revision/n04548362_28128.JPEG",
+  "stimuli/images_revision/n04550184_34194.JPEG",
+  "stimuli/images_revision/n04550184_43944.JPEG",
+  "stimuli/images_revision/n04552348_10423.JPEG",
+  "stimuli/images_revision/n04552348_4820.JPEG",
+  "stimuli/images_revision/n04557648_298.JPEG",
+  "stimuli/images_revision/n04557648_9632.JPEG",
+  "stimuli/images_revision/n04562935_10800.JPEG",
+  "stimuli/images_revision/n04562935_7279.JPEG",
+  "stimuli/images_revision/n04579145_1457.JPEG",
+  "stimuli/images_revision/n04579145_4622.JPEG",
+  "stimuli/images_revision/n04606251_14385.JPEG",
+  "stimuli/images_revision/n04606251_4357.JPEG",
+  "stimuli/images_revision/n06359193_24238.JPEG",
+  "stimuli/images_revision/n06359193_31205.JPEG",
+  "stimuli/images_revision/n06596364_11816.JPEG",
+  "stimuli/images_revision/n06596364_6733.JPEG",
+  "stimuli/images_revision/n07248320_12699.JPEG",
+  "stimuli/images_revision/n07248320_1384.JPEG",
+  "stimuli/images_revision/n07248320_91651.JPEG",
+  "stimuli/images_revision/n07248320_99429.JPEG",
+  "stimuli/images_revision/n07565083_11373.JPEG",
+  "stimuli/images_revision/n07565083_13535.JPEG",
+  "stimuli/images_revision/n07565083_8884.JPEG",
+  "stimuli/images_revision/n07565083_9994.JPEG",
+  "stimuli/images_revision/n07714571_143.JPEG",
+  "stimuli/images_revision/n07714571_6091.JPEG",
+  "stimuli/images_revision/n07714990_2222.JPEG",
+  "stimuli/images_revision/n07714990_486.JPEG",
+  "stimuli/images_revision/n07753592_11578.JPEG",
+  "stimuli/images_revision/n07753592_15601.JPEG",
+  "stimuli/images_revision/n07802026_18163.JPEG",
+  "stimuli/images_revision/n07802026_742.JPEG",
+  "stimuli/images_revision/n07930864_14999.JPEG",
+  "stimuli/images_revision/n07930864_48594.JPEG",
+  "stimuli/images_revision/n07930864_5923.JPEG",
+  "stimuli/images_revision/n07930864_59345.JPEG",
+  "stimuli/images_revision/n09332890_1916.JPEG",
+  "stimuli/images_revision/n09332890_22052.JPEG",
+  "stimuli/images_revision/n09428293_31139.JPEG",
+  "stimuli/images_revision/n09428293_47905.JPEG",
+  "stimuli/images_revision/n12144580_43883.JPEG",
+  "stimuli/images_revision/n12144580_4852.JPEG",
+  "stimuli/images_revision/n12768682_30627.JPEG",
+  "stimuli/images_revision/n12768682_40308.JPEG"
+];
+
+
+var experiment_trials = [
+  { image1: "stimuli/images_revision/n07565083_11373.JPEG", image2: "stimuli/images_revision/n07565083_8884.JPEG", trial_type: "experiment_trial", trial: 0 },
+  { image1: "stimuli/images_revision/n07714990_486.JPEG", image2: "stimuli/images_revision/n07714990_2222.JPEG", trial_type: "experiment_trial", trial: 1 },
+  { image1: "stimuli/images_revision/n03871628_5736.JPEG", image2: "stimuli/images_revision/n03871628_16234.JPEG", trial_type: "experiment_trial", trial: 2 },
+  { image1: "stimuli/images_revision/n02971356_9654.JPEG", image2: "stimuli/images_revision/n02971356_2341.JPEG", trial_type: "experiment_trial", trial: 3 },
+  { image1: "stimuli/images_revision/n03929660_7007.JPEG", image2: "stimuli/images_revision/n03929660_10538.JPEG", trial_type: "experiment_trial", trial: 4 },
+  { image1: "stimuli/images_revision/n03445777_3023.JPEG", image2: "stimuli/images_revision/n03445777_4070.JPEG", trial_type: "experiment_trial", trial: 5 },
+  { image1: "stimuli/images_revision/n03127925_6454.JPEG", image2: "stimuli/images_revision/n03127925_10053.JPEG", trial_type: "experiment_trial", trial: 6 },
+  { image1: "stimuli/images_revision/n03598930_5383.JPEG", image2: "stimuli/images_revision/n03598930_16512.JPEG", trial_type: "experiment_trial", trial: 7 },
+  { image1: "stimuli/images_revision/n07248320_99429.JPEG", image2: "stimuli/images_revision/n07248320_1384.JPEG", trial_type: "experiment_trial", trial: 8 },
+  { image1: "stimuli/images_revision/n01592084_5739.JPEG", image2: "stimuli/images_revision/n01592084_8106.JPEG", trial_type: "experiment_trial", trial: 9 },
+  { image1: "stimuli/images_revision/n04376876_5977.JPEG", image2: "stimuli/images_revision/n04376876_13059.JPEG", trial_type: "experiment_trial", trial: 10 },
+  { image1: "stimuli/images_revision/n04118776_34973.JPEG", image2: "stimuli/images_revision/n04118776_59630.JPEG", trial_type: "experiment_trial", trial: 11 },
+  { image1: "stimuli/images_revision/n03045698_935.JPEG", image2: "stimuli/images_revision/n03045698_1105.JPEG", trial_type: "experiment_trial", trial: 12 },
+  { image1: "stimuli/images_revision/n02107574_560.JPEG", image2: "stimuli/images_revision/n02107574_778.JPEG", trial_type: "experiment_trial", trial: 13 },
+  { image1: "stimuli/images_revision/n03794056_1968.JPEG", image2: "stimuli/images_revision/n03794056_19582.JPEG", trial_type: "experiment_trial", trial: 14 },
+  { image1: "stimuli/images_revision/n06359193_24238.JPEG", image2: "stimuli/images_revision/n06359193_31205.JPEG", trial_type: "experiment_trial", trial: 15 },
+  { image1: "stimuli/images_revision/n04311174_3209.JPEG", image2: "stimuli/images_revision/n04311174_9531.JPEG", trial_type: "experiment_trial", trial: 16 },
+  { image1: "stimuli/images_revision/n04404412_1945.JPEG", image2: "stimuli/images_revision/n04404412_8875.JPEG", trial_type: "experiment_trial", trial: 17 },
+  { image1: "stimuli/images_revision/n01775062_8465.JPEG", image2: "stimuli/images_revision/n01775062_8824.JPEG", trial_type: "experiment_trial", trial: 18 },
+  { image1: "stimuli/images_revision/n02815834_306.JPEG", image2: "stimuli/images_revision/n02815834_5737.JPEG", trial_type: "experiment_trial", trial: 19 },
+  { image1: "stimuli/images_revision/n03788365_9209.JPEG", image2: "stimuli/images_revision/n03788365_6088.JPEG", trial_type: "experiment_trial", trial: 20 },
+  { image1: "stimuli/images_revision/n03976467_15872.JPEG", image2: "stimuli/images_revision/n03976467_5766.JPEG", trial_type: "experiment_trial", trial: 21 },
+  { image1: "stimuli/images_revision/n03908618_3088.JPEG", image2: "stimuli/images_revision/n03908618_6971.JPEG", trial_type: "experiment_trial", trial: 22 },
+  { image1: "stimuli/images_revision/n03649909_25196.JPEG", image2: "stimuli/images_revision/n03649909_7631.JPEG", trial_type: "experiment_trial", trial: 23 },
+  { image1: "stimuli/images_revision/n03482405_26623.JPEG", image2: "stimuli/images_revision/n03482405_27460.JPEG", trial_type: "experiment_trial", trial: 24 },
+  { image1: "stimuli/images_revision/n02328150_112.JPEG", image2: "stimuli/images_revision/n02328150_6221.JPEG", trial_type: "experiment_trial", trial: 25 },
+  { image1: "stimuli/images_revision/n03089624_50118.JPEG", image2: "stimuli/images_revision/n03089624_31684.JPEG", trial_type: "experiment_trial", trial: 26 },
+  { image1: "stimuli/images_revision/n04259630_27398.JPEG", image2: "stimuli/images_revision/n04259630_16045.JPEG", trial_type: "experiment_trial", trial: 27 },
+  { image1: "stimuli/images_revision/n04131690_8613.JPEG", image2: "stimuli/images_revision/n04131690_13765.JPEG", trial_type: "experiment_trial", trial: 28 },
+  { image1: "stimuli/images_revision/n04392985_6656.JPEG", image2: "stimuli/images_revision/n04392985_9599.JPEG", trial_type: "experiment_trial", trial: 29 },
+  { image1: "stimuli/images_revision/n03594734_28196.JPEG", image2: "stimuli/images_revision/n03594734_10857.JPEG", trial_type: "experiment_trial", trial: 30 },
+  { image1: "stimuli/images_revision/n03595614_14516.JPEG", image2: "stimuli/images_revision/n03595614_12795.JPEG", trial_type: "experiment_trial", trial: 31 },
+  { image1: "stimuli/images_revision/n02978881_12127.JPEG", image2: "stimuli/images_revision/n02978881_9853.JPEG", trial_type: "experiment_trial", trial: 32 },
+  { image1: "stimuli/images_revision/n02786058_10847.JPEG", image2: "stimuli/images_revision/n02786058_1833.JPEG", trial_type: "experiment_trial", trial: 33 },
+  { image1: "stimuli/images_revision/n02808304_17563.JPEG", image2: "stimuli/images_revision/n02808304_8053.JPEG", trial_type: "experiment_trial", trial: 34 },
+  { image1: "stimuli/images_revision/n03958227_11594.JPEG", image2: "stimuli/images_revision/n03958227_10573.JPEG", trial_type: "experiment_trial", trial: 35 },
+  { image1: "stimuli/images_revision/n04019541_35276.JPEG", image2: "stimuli/images_revision/n04019541_1476.JPEG", trial_type: "experiment_trial", trial: 36 },
+  { image1: "stimuli/images_revision/n02877765_10667.JPEG", image2: "stimuli/images_revision/n02877765_16369.JPEG", trial_type: "experiment_trial", trial: 37 },
+  { image1: "stimuli/images_revision/n02231487_2265.JPEG", image2: "stimuli/images_revision/n02231487_3193.JPEG", trial_type: "experiment_trial", trial: 38 },
+  { image1: "stimuli/images_revision/n03868242_8456.JPEG", image2: "stimuli/images_revision/n03868242_13802.JPEG", trial_type: "experiment_trial", trial: 39 },
+  { image1: "stimuli/images_revision/n02708093_145.JPEG", image2: "stimuli/images_revision/n02708093_443.JPEG", trial_type: "experiment_trial", trial: 40 },
+  { image1: "stimuli/images_revision/n03124170_5215.JPEG", image2: "stimuli/images_revision/n03124170_10673.JPEG", trial_type: "experiment_trial", trial: 41 },
+  { image1: "stimuli/images_revision/n02927161_42490.JPEG", image2: "stimuli/images_revision/n02927161_792.JPEG", trial_type: "experiment_trial", trial: 42 },
+  { image1: "stimuli/images_revision/n04371774_14967.JPEG", image2: "stimuli/images_revision/n04371774_11964.JPEG", trial_type: "experiment_trial", trial: 43 },
+  { image1: "stimuli/images_revision/n03899768_35157.JPEG", image2: "stimuli/images_revision/n03899768_37963.JPEG", trial_type: "experiment_trial", trial: 44 },
+  { image1: "stimuli/images_revision/n03759954_17862.JPEG", image2: "stimuli/images_revision/n03759954_15525.JPEG", trial_type: "experiment_trial", trial: 45 },
+  { image1: "stimuli/images_revision/n07930864_14999.JPEG", image2: "stimuli/images_revision/n07930864_59345.JPEG", trial_type: "experiment_trial", trial: 46 },
+  { image1: "stimuli/images_revision/n03888257_4179.JPEG", image2: "stimuli/images_revision/n03888257_10044.JPEG", trial_type: "experiment_trial", trial: 47 },
+  { image1: "stimuli/images_revision/n03786901_8187.JPEG", image2: "stimuli/images_revision/n03786901_5481.JPEG", trial_type: "experiment_trial", trial: 48 },
+  { image1: "stimuli/images_revision/n02966687_4132.JPEG", image2: "stimuli/images_revision/n02966687_8049.JPEG", trial_type: "experiment_trial", trial: 49 },
+  { image1: "stimuli/images_revision/n02808440_8792.JPEG", image2: "stimuli/images_revision/n02808440_32236.JPEG", trial_type: "experiment_trial", trial: 50 },
+  { image1: "stimuli/images_revision/n03062245_1974.JPEG", image2: "stimuli/images_revision/n03062245_5468.JPEG", trial_type: "experiment_trial", trial: 51 },
+  { image1: "stimuli/images_revision/n03837869_502.JPEG", image2: "stimuli/images_revision/n03837869_9835.JPEG", trial_type: "experiment_trial", trial: 52 },
+  { image1: "stimuli/images_revision/n03141823_7590.JPEG", image2: "stimuli/images_revision/n03141823_5973.JPEG", trial_type: "experiment_trial", trial: 53 },
+  { image1: "stimuli/images_revision/n04204238_4304.JPEG", image2: "stimuli/images_revision/n04204238_5833.JPEG", trial_type: "experiment_trial", trial: 54 },
+  { image1: "stimuli/images_revision/n04026417_24197.JPEG", image2: "stimuli/images_revision/n04026417_2237.JPEG", trial_type: "experiment_trial", trial: 55 },
+  { image1: "stimuli/images_revision/n03876231_11461.JPEG", image2: "stimuli/images_revision/n03876231_2973.JPEG", trial_type: "experiment_trial", trial: 56 },
+  { image1: "stimuli/images_revision/n03530642_2807.JPEG", image2: "stimuli/images_revision/n03530642_12099.JPEG", trial_type: "experiment_trial", trial: 57 },
+  { image1: "stimuli/images_revision/n04041544_2730.JPEG", image2: "stimuli/images_revision/n04041544_31707.JPEG", trial_type: "experiment_trial", trial: 58 },
+  { image1: "stimuli/images_revision/n04476259_9529.JPEG", image2: "stimuli/images_revision/n04476259_4858.JPEG", trial_type: "experiment_trial", trial: 59 },
+  { image1: "stimuli/images_revision/n01930112_18063.JPEG", image2: "stimuli/images_revision/n01930112_19184.JPEG", trial_type: "experiment_trial", trial: 60 },
+  { image1: "stimuli/images_revision/n02980441_2580.JPEG", image2: "stimuli/images_revision/n02980441_30555.JPEG", trial_type: "experiment_trial", trial: 61 },
+  { image1: "stimuli/images_revision/n02834397_6013.JPEG", image2: "stimuli/images_revision/n02834397_7125.JPEG", trial_type: "experiment_trial", trial: 62 },
+  { image1: "stimuli/images_revision/n04070727_32435.JPEG", image2: "stimuli/images_revision/n04070727_1565.JPEG", trial_type: "experiment_trial", trial: 63 },
+  { image1: "stimuli/images_revision/n03970156_7016.JPEG", image2: "stimuli/images_revision/n03970156_9803.JPEG", trial_type: "experiment_trial", trial: 64 },
+  { image1: "stimuli/images_revision/n04562935_10800.JPEG", image2: "stimuli/images_revision/n04562935_7279.JPEG", trial_type: "experiment_trial", trial: 65 },
+  { image1: "stimuli/images_revision/n03255030_2375.JPEG", image2: "stimuli/images_revision/n03255030_20938.JPEG", trial_type: "experiment_trial", trial: 66 },
+  { image1: "stimuli/images_revision/n12144580_4852.JPEG", image2: "stimuli/images_revision/n12144580_43883.JPEG", trial_type: "experiment_trial", trial: 67 },
+  { image1: "stimuli/images_revision/n04532106_12280.JPEG", image2: "stimuli/images_revision/n04532106_10805.JPEG", trial_type: "experiment_trial", trial: 68 },
+  { image1: "stimuli/images_revision/n04252225_1606.JPEG", image2: "stimuli/images_revision/n04252225_14682.JPEG", trial_type: "experiment_trial", trial: 69 },
+  { image1: "stimuli/images_revision/n07753592_11578.JPEG", image2: "stimuli/images_revision/n07753592_15601.JPEG", trial_type: "experiment_trial", trial: 70 },
+  { image1: "stimuli/images_revision/n03404251_1685.JPEG", image2: "stimuli/images_revision/n03404251_11973.JPEG", trial_type: "experiment_trial", trial: 71 },
+  { image1: "stimuli/images_revision/n03991062_5148.JPEG", image2: "stimuli/images_revision/n03991062_560.JPEG", trial_type: "experiment_trial", trial: 72 },
+  { image1: "stimuli/images_revision/n04127249_1742.JPEG", image2: "stimuli/images_revision/n04127249_8943.JPEG", trial_type: "experiment_trial", trial: 73 },
+  { image1: "stimuli/images_revision/n04548362_10223.JPEG", image2: "stimuli/images_revision/n04548362_28128.JPEG", trial_type: "experiment_trial", trial: 74 },
+  { image1: "stimuli/images_revision/n03538406_1308.JPEG", image2: "stimuli/images_revision/n03538406_10714.JPEG", trial_type: "experiment_trial", trial: 75 },
+  { image1: "stimuli/images_revision/n03642806_11746.JPEG", image2: "stimuli/images_revision/n03642806_3816.JPEG", trial_type: "experiment_trial", trial: 76 },
+  { image1: "stimuli/images_revision/n02437616_17.JPEG", image2: "stimuli/images_revision/n02437616_2362.JPEG", trial_type: "experiment_trial", trial: 77 },
+  { image1: "stimuli/images_revision/n03000134_2406.JPEG", image2: "stimuli/images_revision/n03000134_2550.JPEG", trial_type: "experiment_trial", trial: 78 },
+  { image1: "stimuli/images_revision/n04179913_11745.JPEG", image2: "stimuli/images_revision/n04179913_46.JPEG", trial_type: "experiment_trial", trial: 79 },
+  { image1: "stimuli/images_revision/n03804744_8946.JPEG", image2: "stimuli/images_revision/n03804744_21749.JPEG", trial_type: "experiment_trial", trial: 80 },
+  { image1: "stimuli/images_revision/n04423845_16665.JPEG", image2: "stimuli/images_revision/n04423845_22643.JPEG", trial_type: "experiment_trial", trial: 81 },
+  { image1: "stimuli/images_revision/n02747177_29325.JPEG", image2: "stimuli/images_revision/n02747177_27593.JPEG", trial_type: "experiment_trial", trial: 82 },
+  { image1: "stimuli/images_revision/n03825788_9513.JPEG", image2: "stimuli/images_revision/n03825788_30429.JPEG", trial_type: "experiment_trial", trial: 83 },
+  { image1: "stimuli/images_revision/n03124043_1713.JPEG", image2: "stimuli/images_revision/n03124043_902.JPEG", trial_type: "experiment_trial", trial: 84 },
+  { image1: "stimuli/images_revision/n04550184_43944.JPEG", image2: "stimuli/images_revision/n04550184_34194.JPEG", trial_type: "experiment_trial", trial: 85 },
+  { image1: "stimuli/images_revision/n03297495_5210.JPEG", image2: "stimuli/images_revision/n03297495_1861.JPEG", trial_type: "experiment_trial", trial: 86 },
+  { image1: "stimuli/images_revision/n03924679_7447.JPEG", image2: "stimuli/images_revision/n03924679_8982.JPEG", trial_type: "experiment_trial", trial: 87 },
+  { image1: "stimuli/images_revision/n04204347_4353.JPEG", image2: "stimuli/images_revision/n04204347_5952.JPEG", trial_type: "experiment_trial", trial: 88 },
+  { image1: "stimuli/images_revision/n02879718_36638.JPEG", image2: "stimuli/images_revision/n02879718_8403.JPEG", trial_type: "experiment_trial", trial: 89 },
+  { image1: "stimuli/images_revision/n04372370_23966.JPEG", image2: "stimuli/images_revision/n04372370_41159.JPEG", trial_type: "experiment_trial", trial: 90 },
+  { image1: "stimuli/images_revision/n03920288_1496.JPEG", image2: "stimuli/images_revision/n03920288_4806.JPEG", trial_type: "experiment_trial", trial: 91 },
+  { image1: "stimuli/images_revision/n03179701_2117.JPEG", image2: "stimuli/images_revision/n03179701_4853.JPEG", trial_type: "experiment_trial", trial: 92 },
+  { image1: "stimuli/images_revision/n04162706_40299.JPEG", image2: "stimuli/images_revision/n04162706_23557.JPEG", trial_type: "experiment_trial", trial: 93 },
+  { image1: "stimuli/images_revision/n04286575_14356.JPEG", image2: "stimuli/images_revision/n04286575_490.JPEG", trial_type: "experiment_trial", trial: 94 },
+  { image1: "stimuli/images_revision/n03658185_20896.JPEG", image2: "stimuli/images_revision/n03658185_1675.JPEG", trial_type: "experiment_trial", trial: 95 },
+  { image1: "stimuli/images_revision/n02840245_7031.JPEG", image2: "stimuli/images_revision/n02840245_5364.JPEG", trial_type: "experiment_trial", trial: 96 },
+  { image1: "stimuli/images_revision/n04332243_41364.JPEG", image2: "stimuli/images_revision/n04332243_14513.JPEG", trial_type: "experiment_trial", trial: 97 },
+  { image1: "stimuli/images_revision/n03995372_9129.JPEG", image2: "stimuli/images_revision/n03995372_18138.JPEG", trial_type: "experiment_trial", trial: 98 },
+  { image1: "stimuli/images_revision/n02776631_246.JPEG", image2: "stimuli/images_revision/n02776631_21860.JPEG", trial_type: "experiment_trial", trial: 99 },
+  { image1: "stimuli/images_revision/n02125311_45953.JPEG", image2: "stimuli/images_revision/n02125311_76311.JPEG", trial_type: "experiment_trial", trial: 100 },
+  { image1: "stimuli/images_revision/n07802026_742.JPEG", image2: "stimuli/images_revision/n07802026_18163.JPEG", trial_type: "experiment_trial", trial: 101 },
+  { image1: "stimuli/images_revision/n02892201_18148.JPEG", image2: "stimuli/images_revision/n02892201_68232.JPEG", trial_type: "experiment_trial", trial: 102 },
+  { image1: "stimuli/images_revision/n04254680_1344.JPEG", image2: "stimuli/images_revision/n04254680_5301.JPEG", trial_type: "experiment_trial", trial: 103 },
+  { image1: "stimuli/images_revision/n03146219_9451.JPEG", image2: "stimuli/images_revision/n03146219_25934.JPEG", trial_type: "experiment_trial", trial: 104 },
+  { image1: "stimuli/images_revision/n02442845_4826.JPEG", image2: "stimuli/images_revision/n02442845_1297.JPEG", trial_type: "experiment_trial", trial: 105 },
+  { image1: "stimuli/images_revision/n03937543_766.JPEG", image2: "stimuli/images_revision/n03937543_9360.JPEG", trial_type: "experiment_trial", trial: 106 },
+  { image1: "stimuli/images_revision/n03478589_9857.JPEG", image2: "stimuli/images_revision/n03478589_17203.JPEG", trial_type: "experiment_trial", trial: 107 },
+  { image1: "stimuli/images_revision/n12768682_40308.JPEG", image2: "stimuli/images_revision/n12768682_30627.JPEG", trial_type: "experiment_trial", trial: 108 },
+  { image1: "stimuli/images_revision/n03417042_6888.JPEG", image2: "stimuli/images_revision/n03417042_13729.JPEG", trial_type: "experiment_trial", trial: 109 },
+  { image1: "stimuli/images_revision/n03041632_126.JPEG", image2: "stimuli/images_revision/n03041632_56172.JPEG", trial_type: "experiment_trial", trial: 110 },
+  { image1: "stimuli/images_revision/n02132136_28335.JPEG", image2: "stimuli/images_revision/n02132136_33657.JPEG", trial_type: "experiment_trial", trial: 111 },
+  { image1: "stimuli/images_revision/n07565083_13535.JPEG", image2: "stimuli/images_revision/n07565083_9994.JPEG", trial_type: "experiment_trial", trial: 112 },
+  { image1: "stimuli/images_revision/n01494475_17410.JPEG", image2: "stimuli/images_revision/n01494475_9428.JPEG", trial_type: "experiment_trial", trial: 113 },
+  { image1: "stimuli/images_revision/n01943899_16388.JPEG", image2: "stimuli/images_revision/n01943899_20459.JPEG", trial_type: "experiment_trial", trial: 114 },
+  { image1: "stimuli/images_revision/n03944341_5635.JPEG", image2: "stimuli/images_revision/n03944341_13527.JPEG", trial_type: "experiment_trial", trial: 115 },
+  { image1: "stimuli/images_revision/n04606251_4357.JPEG", image2: "stimuli/images_revision/n04606251_14385.JPEG", trial_type: "experiment_trial", trial: 116 },
+  { image1: "stimuli/images_revision/n03208938_19057.JPEG", image2: "stimuli/images_revision/n03208938_9504.JPEG", trial_type: "experiment_trial", trial: 117 },
+  { image1: "stimuli/images_revision/n02096294_4162.JPEG", image2: "stimuli/images_revision/n02096294_6393.JPEG", trial_type: "experiment_trial", trial: 118 },
+  { image1: "stimuli/images_revision/n03857828_7840.JPEG", image2: "stimuli/images_revision/n03857828_67789.JPEG", trial_type: "experiment_trial", trial: 119 },
+  { image1: "stimuli/images_revision/n03272562_2050.JPEG", image2: "stimuli/images_revision/n03272562_11105.JPEG", trial_type: "experiment_trial", trial: 120 },
+  { image1: "stimuli/images_revision/n02841315_12954.JPEG", image2: "stimuli/images_revision/n02841315_27229.JPEG", trial_type: "experiment_trial", trial: 121 },
+  { image1: "stimuli/images_revision/n04542943_1967.JPEG", image2: "stimuli/images_revision/n04542943_6916.JPEG", trial_type: "experiment_trial", trial: 122 },
+  { image1: "stimuli/images_revision/n02408429_666.JPEG", image2: "stimuli/images_revision/n02408429_16723.JPEG", trial_type: "experiment_trial", trial: 123 },
+  { image1: "stimuli/images_revision/n03929660_22024.JPEG", image2: "stimuli/images_revision/n03929660_426.JPEG", trial_type: "experiment_trial", trial: 124 },
+  { image1: "stimuli/images_revision/n02708093_4267.JPEG", image2: "stimuli/images_revision/n02708093_4553.JPEG", trial_type: "experiment_trial", trial: 125 },
+  { image1: "stimuli/images_revision/n03075370_17061.JPEG", image2: "stimuli/images_revision/n03075370_2099.JPEG", trial_type: "experiment_trial", trial: 126 },
+  { image1: "stimuli/images_revision/n02493793_6405.JPEG", image2: "stimuli/images_revision/n02493793_8364.JPEG", trial_type: "experiment_trial", trial: 127 },
+  { image1: "stimuli/images_revision/n03598930_10079.JPEG", image2: "stimuli/images_revision/n03598930_10546.JPEG", trial_type: "experiment_trial", trial: 128 },
+  { image1: "stimuli/images_revision/n02690373_283.JPEG", image2: "stimuli/images_revision/n02690373_10423.JPEG", trial_type: "experiment_trial", trial: 129 },
+  { image1: "stimuli/images_revision/n01531178_4907.JPEG", image2: "stimuli/images_revision/n01531178_9703.JPEG", trial_type: "experiment_trial", trial: 130 },
+  { image1: "stimuli/images_revision/n03347037_27893.JPEG", image2: "stimuli/images_revision/n03347037_30852.JPEG", trial_type: "experiment_trial", trial: 131 },
+  { image1: "stimuli/images_revision/n03676483_8945.JPEG", image2: "stimuli/images_revision/n03676483_2277.JPEG", trial_type: "experiment_trial", trial: 132 },
+  { image1: "stimuli/images_revision/n03891332_3869.JPEG", image2: "stimuli/images_revision/n03891332_70.JPEG", trial_type: "experiment_trial", trial: 133 },
+  { image1: "stimuli/images_revision/n03447721_26918.JPEG", image2: "stimuli/images_revision/n03447721_46960.JPEG", trial_type: "experiment_trial", trial: 134 },
+  { image1: "stimuli/images_revision/n03995372_19939.JPEG", image2: "stimuli/images_revision/n03995372_9508.JPEG", trial_type: "experiment_trial", trial: 135 },
+  { image1: "stimuli/images_revision/n07248320_12699.JPEG", image2: "stimuli/images_revision/n07248320_91651.JPEG", trial_type: "experiment_trial", trial: 136 },
+  { image1: "stimuli/images_revision/n04141327_9240.JPEG", image2: "stimuli/images_revision/n04141327_19266.JPEG", trial_type: "experiment_trial", trial: 137 },
+  { image1: "stimuli/images_revision/n02361337_144.JPEG", image2: "stimuli/images_revision/n02361337_7701.JPEG", trial_type: "experiment_trial", trial: 138 },
+  { image1: "stimuli/images_revision/n03673027_17432.JPEG", image2: "stimuli/images_revision/n03673027_23225.JPEG", trial_type: "experiment_trial", trial: 139 },
+  { image1: "stimuli/images_revision/n03584829_33522.JPEG", image2: "stimuli/images_revision/n03584829_34641.JPEG", trial_type: "experiment_trial", trial: 140 },
+  { image1: "stimuli/images_revision/n03977966_64051.JPEG", image2: "stimuli/images_revision/n03977966_54335.JPEG", trial_type: "experiment_trial", trial: 141 },
+  { image1: "stimuli/images_revision/n02837789_13442.JPEG", image2: "stimuli/images_revision/n02837789_6264.JPEG", trial_type: "experiment_trial", trial: 142 },
+  { image1: "stimuli/images_revision/n04579145_1457.JPEG", image2: "stimuli/images_revision/n04579145_4622.JPEG", trial_type: "experiment_trial", trial: 143 },
+  { image1: "stimuli/images_revision/n03492542_14601.JPEG", image2: "stimuli/images_revision/n03492542_17902.JPEG", trial_type: "experiment_trial", trial: 144 },
+  { image1: "stimuli/images_revision/n04065272_38896.JPEG", image2: "stimuli/images_revision/n04065272_40021.JPEG", trial_type: "experiment_trial", trial: 145 },
+  { image1: "stimuli/images_revision/n04507155_17917.JPEG", image2: "stimuli/images_revision/n04507155_24195.JPEG", trial_type: "experiment_trial", trial: 146 },
+  { image1: "stimuli/images_revision/n09332890_22052.JPEG", image2: "stimuli/images_revision/n09332890_1916.JPEG", trial_type: "experiment_trial", trial: 147 },
+  { image1: "stimuli/images_revision/n02129165_23847.JPEG", image2: "stimuli/images_revision/n02129165_7913.JPEG", trial_type: "experiment_trial", trial: 148 },
+  { image1: "stimuli/images_revision/n02676566_6260.JPEG", image2: "stimuli/images_revision/n02676566_15152.JPEG", trial_type: "experiment_trial", trial: 149 },
+  { image1: "stimuli/images_revision/n03355925_7712.JPEG", image2: "stimuli/images_revision/n03355925_15090.JPEG", trial_type: "experiment_trial", trial: 150 },
+  { image1: "stimuli/images_revision/n03838899_5735.JPEG", image2: "stimuli/images_revision/n03838899_32227.JPEG", trial_type: "experiment_trial", trial: 151 },
+  { image1: "stimuli/images_revision/n02319095_232.JPEG", image2: "stimuli/images_revision/n02319095_22666.JPEG", trial_type: "experiment_trial", trial: 152 },
+  { image1: "stimuli/images_revision/n03388043_3293.JPEG", image2: "stimuli/images_revision/n03388043_6674.JPEG", trial_type: "experiment_trial", trial: 153 },
+  { image1: "stimuli/images_revision/n09428293_31139.JPEG", image2: "stimuli/images_revision/n09428293_47905.JPEG", trial_type: "experiment_trial", trial: 154 },
+  { image1: "stimuli/images_revision/n06596364_6733.JPEG", image2: "stimuli/images_revision/n06596364_11816.JPEG", trial_type: "experiment_trial", trial: 155 },
+  { image1: "stimuli/images_revision/n03954731_33573.JPEG", image2: "stimuli/images_revision/n03954731_1061.JPEG", trial_type: "experiment_trial", trial: 156 },
+  { image1: "stimuli/images_revision/n04019541_5341.JPEG", image2: "stimuli/images_revision/n04019541_20529.JPEG", trial_type: "experiment_trial", trial: 157 },
+  { image1: "stimuli/images_revision/n02089867_424.JPEG", image2: "stimuli/images_revision/n02089867_8147.JPEG", trial_type: "experiment_trial", trial: 158 },
+  { image1: "stimuli/images_revision/n03314780_7552.JPEG", image2: "stimuli/images_revision/n03314780_4690.JPEG", trial_type: "experiment_trial", trial: 159 },
+  { image1: "stimuli/images_revision/n02834397_609.JPEG", image2: "stimuli/images_revision/n02834397_19623.JPEG", trial_type: "experiment_trial", trial: 160 },
+  { image1: "stimuli/images_revision/n02489166_9752.JPEG", image2: "stimuli/images_revision/n02489166_3525.JPEG", trial_type: "experiment_trial", trial: 161 },
+  { image1: "stimuli/images_revision/n02769748_1319.JPEG", image2: "stimuli/images_revision/n02769748_6483.JPEG", trial_type: "experiment_trial", trial: 162 },
+  { image1: "stimuli/images_revision/n03124043_2857.JPEG", image2: "stimuli/images_revision/n03124043_6264.JPEG", trial_type: "experiment_trial", trial: 163 },
+  { image1: "stimuli/images_revision/n02951358_4354.JPEG", image2: "stimuli/images_revision/n02951358_35002.JPEG", trial_type: "experiment_trial", trial: 164 },
+  { image1: "stimuli/images_revision/n02782093_1535.JPEG", image2: "stimuli/images_revision/n02782093_38268.JPEG", trial_type: "experiment_trial", trial: 165 },
+  { image1: "stimuli/images_revision/n04540053_1121.JPEG", image2: "stimuli/images_revision/n04540053_2205.JPEG", trial_type: "experiment_trial", trial: 166 },
+  { image1: "stimuli/images_revision/n01632458_7518.JPEG", image2: "stimuli/images_revision/n01632458_2761.JPEG", trial_type: "experiment_trial", trial: 167 },
+  { image1: "stimuli/images_revision/n03633091_13292.JPEG", image2: "stimuli/images_revision/n03633091_7417.JPEG", trial_type: "experiment_trial", trial: 168 },
+  { image1: "stimuli/images_revision/n04552348_10423.JPEG", image2: "stimuli/images_revision/n04552348_4820.JPEG", trial_type: "experiment_trial", trial: 169 },
+  { image1: "stimuli/images_revision/n03344393_6577.JPEG", image2: "stimuli/images_revision/n03344393_5668.JPEG", trial_type: "experiment_trial", trial: 170 },
+  { image1: "stimuli/images_revision/n07714571_143.JPEG", image2: "stimuli/images_revision/n07714571_6091.JPEG", trial_type: "experiment_trial", trial: 171 },
+  { image1: "stimuli/images_revision/n02795169_19321.JPEG", image2: "stimuli/images_revision/n02795169_29988.JPEG", trial_type: "experiment_trial", trial: 172 },
+  { image1: "stimuli/images_revision/n03657121_7176.JPEG", image2: "stimuli/images_revision/n03657121_6749.JPEG", trial_type: "experiment_trial", trial: 173 },
+  { image1: "stimuli/images_revision/n01560419_123.JPEG", image2: "stimuli/images_revision/n01560419_4540.JPEG", trial_type: "experiment_trial", trial: 174 },
+  { image1: "stimuli/images_revision/n03769881_3630.JPEG", image2: "stimuli/images_revision/n03769881_4443.JPEG", trial_type: "experiment_trial", trial: 175 },
+  { image1: "stimuli/images_revision/n01833805_11108.JPEG", image2: "stimuli/images_revision/n01833805_23744.JPEG", trial_type: "experiment_trial", trial: 176 },
+  { image1: "stimuli/images_revision/n02799071_2055.JPEG", image2: "stimuli/images_revision/n02799071_39180.JPEG", trial_type: "experiment_trial", trial: 177 },
+  { image1: "stimuli/images_revision/n04090263_9316.JPEG", image2: "stimuli/images_revision/n04090263_11525.JPEG", trial_type: "experiment_trial", trial: 178 },
+  { image1: "stimuli/images_revision/n02356798_2508.JPEG", image2: "stimuli/images_revision/n02356798_4561.JPEG", trial_type: "experiment_trial", trial: 179 },
+  { image1: "stimuli/images_revision/n03950228_11161.JPEG", image2: "stimuli/images_revision/n03950228_6938.JPEG", trial_type: "experiment_trial", trial: 180 },
+  { image1: "stimuli/images_revision/n04525305_11922.JPEG", image2: "stimuli/images_revision/n04525305_5056.JPEG", trial_type: "experiment_trial", trial: 181 },
+  { image1: "stimuli/images_revision/n02840245_8308.JPEG", image2: "stimuli/images_revision/n02840245_1168.JPEG", trial_type: "experiment_trial", trial: 182 },
+  { image1: "stimuli/images_revision/n04069434_4123.JPEG", image2: "stimuli/images_revision/n04069434_12120.JPEG", trial_type: "experiment_trial", trial: 183 },
+  { image1: "stimuli/images_revision/n04505470_713.JPEG", image2: "stimuli/images_revision/n04505470_3286.JPEG", trial_type: "experiment_trial", trial: 184 },
+  { image1: "stimuli/images_revision/n01739381_8323.JPEG", image2: "stimuli/images_revision/n01739381_9834.JPEG", trial_type: "experiment_trial", trial: 185 },
+  { image1: "stimuli/images_revision/n07930864_5923.JPEG", image2: "stimuli/images_revision/n07930864_48594.JPEG", trial_type: "experiment_trial", trial: 186 },
+  { image1: "stimuli/images_revision/n03393912_1055.JPEG", image2: "stimuli/images_revision/n03393912_1491.JPEG", trial_type: "experiment_trial", trial: 187 },
+  { image1: "stimuli/images_revision/n02701002_22415.JPEG", image2: "stimuli/images_revision/n02701002_7445.JPEG", trial_type: "experiment_trial", trial: 188 },
+  { image1: "stimuli/images_revision/n04409515_2917.JPEG", image2: "stimuli/images_revision/n04409515_7951.JPEG", trial_type: "experiment_trial", trial: 189 },
+  { image1: "stimuli/images_revision/n04557648_298.JPEG", image2: "stimuli/images_revision/n04557648_9632.JPEG", trial_type: "experiment_trial", trial: 190 },
+  { image1: "stimuli/images_revision/n03841143_14448.JPEG", image2: "stimuli/images_revision/n03841143_3366.JPEG", trial_type: "experiment_trial", trial: 191 },
+  { image1: "stimuli/images_revision/n03223299_7378.JPEG", image2: "stimuli/images_revision/n03223299_22775.JPEG", trial_type: "experiment_trial", trial: 192 },
+  { image1: "stimuli/images_revision/n02117135_1302.JPEG", image2: "stimuli/images_revision/n02117135_4940.JPEG", trial_type: "experiment_trial", trial: 193 },
+  { image1: "stimuli/images_revision/n03866082_7578.JPEG", image2: "stimuli/images_revision/n03866082_11330.JPEG", trial_type: "experiment_trial", trial: 194 },
+  { image1: "stimuli/images_revision/n03026506_1403.JPEG", image2: "stimuli/images_revision/n03026506_9519.JPEG", trial_type: "experiment_trial", trial: 195 },
+  { image1: "stimuli/images_revision/n02910353_8043.JPEG", image2: "stimuli/images_revision/n02910353_10783.JPEG", trial_type: "experiment_trial", trial: 196 },
+  { image1: "stimuli/images_revision/n03544143_5448.JPEG", image2: "stimuli/images_revision/n03544143_4970.JPEG", trial_type: "experiment_trial", trial: 197 },
+  { image1: "stimuli/images_revision/n04008634_546.JPEG", image2: "stimuli/images_revision/n04008634_2698.JPEG", trial_type: "experiment_trial", trial: 198 },
+  { image1: "stimuli/images_revision/n04532106_5730.JPEG", image2: "stimuli/images_revision/n04532106_3920.JPEG", trial_type: "experiment_trial", trial: 199 },
+];
+
+   // Fetch experiment data for trials (each participants receives a customize set of trials and images)
+  //var response = await fetch("https://967-humaneval-175.exp.amd.mpib.org/api/inputs/by-group/ids");
+  //var input = await response.json();
+
+    //Flatten the array and construct image paths
+    //var participant_images = input.flatMap(entry => [
+        //entry.image1,
+        //entry.image2,
+    //]);
+
+    // Fetch the participant ID from the first entry's 'id' property
+  //var subject_id = input.length > 0 ? input[0].id : null;
+
+  // Here I am preloading all the image files I need to run the experiment, so that the experiment runs smoothly even when internet
+  // connection gets unstable
+  var preload = {
+        type: jsPsychPreload,
+        auto_preload: true,
+        images: [instru_images,training_trials_images,experiment_trials_images].flat(),
+        show_progress_bar: true,
+        message: '<span style="font-size: 30px;"><br>Please wait while the experiment files load.</span>'
+  };
+
+  // Maiks preload function
+  //const cache = await preloadImages([instru_images,participant_images,catch_trial_images,training_trials_images].flat(), 20)
+
+  // After preload I want to introduce a possibility to end the experiment early and still save data
+  document.addEventListener('keydown', async function(event) {
+    if (event.key === 'Escape') {
+        // Wrap the code in an async IIFE (Immediately Invoked Function Expression)
+        (async () => {
+            // Assuming saveData is your function to save the experiment data
+            await saveData(jsPsych.data.get().values());
+            // This gives participants the chance to read the end screen before they get redirected.
+            await redirectAfterDelay(10, "https://app.prolific.com/submissions/complete?cc=C717VYQC");
+        })();
+    }
+});
+
+
+    // I am initializing the timeline where my experiment structure will be accomodated
+    var timeline = [];
+    subject_id = "participant_"
+    // I am adding meta data about the participant, and exp. indo to the globald jsPsych data construct
+    jsPsych.data.addProperties({
+      start : (new Date).toISOString().replace(/z|t/gi,' ').trim(),
+      subject_id: subject_id,
+      study_id: study_id,
+      OS : window.navigator.platform,
+      prolific_id : prolific_id,
+      session_id: session_id,
+      fullscreen_enter: true
+    });
+
+    //In the following I am making sure that participants enter full screen
+    var enter_fullscreen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true,
+        message: '<p style="font-size: x-large; color:#4682B4;"><strong>Welcome to this experiment!</strong></p><br>'+
+            '<br>'+
+            '<p>To maximise the quality of the results, we ask you to remain in fullscreen mode for the duration of the experiment.</p>'+
+            '<p>If you do exit fullscreen mode during the experiment, you will be redirected to Prolific and the experiment will terminate.</p>' +
+            '<p>Once the experiment is over, you will automatically be redirected to Prolific, so please don\'t close the experiment until this happens.</p>'+
+            '<br>'+
+            '<p>To enter fullscreen mode and <span>continue</span>, please click <span style="font-style: italic;">Continue</span>.</p>',
+
+
+        on_start: function() {
+            should_be_in_fullscreen = true, // once this trial starts, the participant should be in fullscreen
+            // Ones participants reach this routine they have to have approved the consent form, otherwise they would have been redirected to prolific.
+            consent_given = true;
+        }
+    }
+
+
+  var demographics_gender = {
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Which gender do you identify with?",
+      name: 'gender',
+      options: ['Female', 'Male', 'Diverse', 'Prefer not to say'],
+      required: true
+    }
+  ],
+  preamble: "<p style='font-size:18px;'>Please answer the following question:</p>",
+  button_label: "Continue"
+};
+
+var demographics_age = {
+  type: jsPsychSurveyText,
+  questions: [
+    {
+      prompt: "How old are you?",
+      placeholder: "Enter your age...",
+      name: "age",
+      required: true
+    }
+  ],
+  preamble: "<p style='font-size:18px;'>One more question:</p>",
+  button_label: "Continue"
+};
+
+
+
+
+   // In the following I am defining the instrcution routines that walk the participant through a set of interactive instructions
+   // I am splittig the instruction routines to be able to accomodate the interactivity (only reason for split)
+
+
+   var instructions = {
+  type: jsPsychInstructions,
+  pages: [
+    // Original Intro Page 1
+    '<p style="font-size: x-large; color:#4682B4;"><strong>Instructions</strong></p><br>' +
+    'Welcome! In the following, we will explain how the task works.' +
+    '<p>To continue with the instructions, please click next.<br><br>The "next" button will always be enabled after a few seconds.</p>',
+
+    // Original Intro Page 2
+    '<p>During this experiment, we will ask you to make very easy decisions about 2 everyday objects.</p>' +
+    '<p>The following instructions will explain in detail how the task works and give some examples.</p>' +
+    '<p>You can navigate back and forth through the instructions using the arrow keys on your keyboard.</p>',
+
+    //// Original Intro Page 3 (updated)
+    '<p>In this task, you will see <strong>two images</strong> presented side by side.</p>' +
+    '<p>You are asked to <strong>rate how semantically related</strong> the two images are — that is, how similar they are in meaning or category.</p>' +
+    '<p><strong>For example:</strong> the two images below seem <strong>semantically very similar</strong>.</p>'+
+    `<div style="text-align: center;">` +
+      `<img src="stimuli/instructions/ILSVRC2012_val_00048710.JPEG" style="max-width: 25%; margin: 10px;" />` +
+      `<img src="stimuli/instructions/ILSVRC2012_val_00037611.JPEG" style="max-width: 25%; margin: 10px;" />` +
+
+    `</div>` +
+    '<p>Both images show birds — in fact, the <em>same kind of bird</em> — just in different settings.</p>' ,
+
+
+    // New Visual Example Page 1
+    `<p>Here’s an example of two objects that are <strong>visually similar but semantically different</strong>.</p>` +
+    `<p><strong>These would be rated as semantically dissimilar.</strong></p>` +
+    `<div style="text-align: center;">` +
+      `<img src="stimuli/instructions/parachute-jellyfish-03.jpg" style="max-width: 25%; margin: 10px;" />` +
+      `<img src="stimuli/instructions/o-parachute_1.jpg" style="max-width: 25%; margin: 10px;" />` +
+    `</div>` +
+    `<p>Even though both objects seem to have a similar shape and color space, one is a parachute and the other is a jellyfish.</p>`,
+
+    // Response Instructions
+    '<p style="font-size: x-large; color:#4682B4;"><strong>How can you give your answer?</strong></p><br>' +
+    '<p>You will be asked to respond using a <strong>slider</strong> from 1 to 5:</p>' +
+    '<p>1 = Very dissimilar (not at all related), 5 = Very similar (highly related)</p>' +
+    '<p>You can click and drag the slider with your mouse to choose your answer. Movement is required before you can continue.</p>' +
+    '<p>The slider will always start at the middle point (= 3, Neutral). If you want to select 3, you still need to <strong>briefly move the slider</strong> in one direction and then back to 3 to confirm your choice.</p>',
+
+
+    '<p style="font-size: x-large; color:#4682B4;"><strong>Let’s recap:</strong></p>' +
+    '<p>Your job is to rate how <strong>related</strong> the 2 images are in meaning or what kind of thing they are.</p>' +
+    '<p>If the two images show objects that belong to the <strong>same kind of category</strong> (e.g., two kinds of cups), give a <strong>higher rating</strong>.</p>' +
+    '<p>If they seem to belong to <strong>very different categories</strong> (e.g., a cup and a dog), give a <strong>lower rating</strong>.</p>' +
+    '<p>There are no right or wrong answers — just use your intuition!</p>',
+
+
+    // Timing Info
+    '<p>You will have <strong>30 seconds</strong> to respond on each trial.</p>' +
+    '<p>So, there is enough time for you to make a decision, you do not need to rush.</p>' +
+    '<p>If the time runs out, the next trial will begin automatically.</p>' +
+    '<p>Please do your best to answer thoughtfully and accurately.</p>',
+
+    // Practice Trial Info
+    '<p>You will now begin with a few <strong>practice trials</strong> to get used to the task.</p>' +
+    '<p>If you’d like to reread the instructions, you can go back using the arrow keys.</p>' +
+    '<p>When you’re ready, click “Next” to begin the practice.</p>'
+  ],
+  show_clickable_nav: true,
+  post_trial_gap: 200,
+  min_viewing_time: 3000
+};
+
+var reenter_fullscreen = {
+    type: jsPsychFullscreen,
+    fullscreen_mode: true,
+    message: '<p style="font-size: x-large; color: grey;"><strong>We have detected that you exited fullscreen</strong></p><br>' +
+             '<br>' +
+             '<p>To maximise the quality of the results, we ask you to remain in fullscreen mode for the full duration of the experiment.</p>' +
+             '<br>' +
+             '<p>To reenter fullscreen mode and <span>continue the task</span>, please click <span style="font-style: italic;">Continue</span>.</p>',
+    on_finish: function() {
+        // Update the variable to indicate that fullscreen has been re-entered
+        fullscreenEnteredAfterLastCheck = true;
+
+        // Optional: Log to the console or perform other actions
+        console.log("Fullscreen mode has been re-entered.");
+    }
+};
+
+var fullscreen_reentry_conditional = {
+  timeline: [reenter_fullscreen],
+  conditional_function: function() {
+    // Ensure fullscreenEnteredAfterLastCheck is declared and initialized outside this function
+    var interactionData = jsPsych.data.getInteractionData();
+    var fullscreenExited = interactionData.filter({event: 'fullscreenexit'}).count() > 0;
+
+    if (fullscreenExited && !fullscreenEnteredAfterLastCheck) {
+      jsPsych.data.get().push({
+        fullscreen_exit_detected: true,
+        timestamp: Date.now(), // Optional timestamp for when the exit was detected
+      });
+
+      fullscreenEnteredAfterLastCheck = false;
+      return true; // Proceed to trigger the fullscreen re-entry trial
+    } else {
+      return false; // Do not trigger if fullscreen was not exited or has been re-entered
+    }
+  }
+};
+
+
+    // I am interleaving the exp trials with these break routines that allow for a break of max. 2 minutes approx. every 10 minutes
+    var break_trial = {
+    type: jsPsychHtmlKeyboardResponse, // or any other plugin that supports trial_duration
+    stimulus: '<p><strong>Nicely done!</strong></p>' +
+        '<br>' +
+        '<p>If you need a break, you can take one now.</p>' +
+        '<p>Please allow yourself a maximum of 2 minutes. It is important that you don\'t forget the task rules before you resume the experiment.</p>' +
+        '<p>The task will automatically continue after 2 minutes.</p>' +
+        '<br>' +
+        '<p>Press any <strong>arrow key</strong> [&larr; &darr; &rarr;] to continue when you\'re ready.</p>',
+    choices: ['ArrowLeft', 'ArrowDown', 'ArrowRight'],
+    trial_duration: 120000, // 2 minutes
+    response_ends_trial: true,
+    on_finish: function(data) {
+        // Determine how the trial ended and store this information in the data object
+        if(data.rt === null) {
+            data.break_ending = "ended by timeout after 2 minutes";
+        } else {
+            data.break_ending = "ended by participant's action after " + data.rt + " ms";
+        }
+        data.exp_trial_type = "break";
+
+        // Check for fullscreen exit
+        // I am adding a check for fullscreen conditional that prompts participants to reenter fullscreen
+        // Log interaction data to the console for debugging
+        console.log("Checking for fullscreen exits in interaction data...");
+        var interactionData = jsPsych.data.getInteractionData();
+        var fullscreenExited = interactionData.filter({event: 'fullscreenexit'}).count() > 0;
+        // Set a data property to indicate whether a fullscreen exit was detected
+        data.fullscreen_exit_detected = fullscreenExited;
+    }
+};
+
+    // Split the experiment trials that are fetched for each participant into 6 blocks to create a trial structure that can be interleaved with catch trials and breaks
+  var block1_stimuli = experiment_trials.slice(0, 100);   // First 100 trials
+  var block2_stimuli = experiment_trials.slice(100, 200); // Next 100 trials
+
+
+
+  // I am preparing a conditional procedure to run when no response is made
+  var timeout_message = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: "<span style='font-size:1vw;'><p>It seems like you're unsure about that one.</p><p>That's okay, try the next one!</p></span>",
+  choices: ['Next Trial >'],
+  button_html: '<button style="position:fixed; width:7vw; left:calc(50vw - 4vw); bottom:2vw; margin:2vw; font-size:1vw;" class="jspsych-btn">%choice%</button>', // Removed onclick attribute
+  data: {
+    test_part: 'timeout_message',
+  }
+};
+
+
+// Define a conditional timeout procedure
+var timeout_conditional = {
+  timeline: [timeout_message],
+  conditional_function: function () {
+    // Check if the response was null for the last trial
+    var lastTrialData = jsPsych.data.getLastTrialData().values()[0];
+    return lastTrialData.keypress === 'NoResponse';
+  }
+};
+
+// Adding a routine that tells participants that they successfully finished the practice phase
+var end_of_practice = {
+        type: jsPsychInstructions,
+        pages: [
+            '<p style="font-size: x-large; color:#778899;"><strong>Well done!</strong></p><br>'+
+            '<p>Now that you\'ve got the hang of the task, you can start the first block of the testing phase.</p>' +
+            '<p>You will have time for a short break after approximately 20 minutes.</p>' +
+            '<p>Remember, you just need to use your mouse to move the slider to respond.</p>' +
+            '<p></p>' +
+            '<p>Click <strong>Next</strong> to begin.</p>'
+        ],
+        show_clickable_nav: true,
+        post_trial_gap: 1000
+};
+
+
+
+
+// Wrapped in a function here is the main trial routine.
+// By calling the function for every new block of trials,
+// you can interleave the experimental routine with breaks or catch trials.
+function createExperimentBlock(timelineVariables, trial_type_info) {
+  return {
+    timeline: [
+      {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: '<p style="font-size: 36px;">+</p>',
+    choices: "NO_KEYS",
+    trial_duration: 1000
+  },
+  {
+type: jsPsychHtmlSliderResponse,
+stimulus: function() {
+  const img1 = jsPsych.timelineVariable('image1');
+  const img2 = jsPsych.timelineVariable('image2');
+  return `
+    <div style="text-align: center;">
+      <p style="font-size: 24px; margin-bottom: 20px;">How similar are these two images to you?</p>
+      <div>
+        <img src="${img1}" style="height: 250px; width: 250px; object-fit: contain; margin: 10px;" />
+        <img src="${img2}" style="height: 250px; width: 250px; object-fit: contain; margin: 10px;" />
+      </div>
+    </div>
+  `;
+},
+labels: [
+  "<span style='font-size: 18px;'>Very dissimilar<br>(1)</span>",
+  "<span style='font-size: 18px;'><br><br>(2)</span>",
+  "<span style='font-size: 18px;'>Neutral<br><br>(3)</span>",
+  "<span style='font-size: 18px;'><br><br>(4)</span>",
+  "<span style='font-size: 18px;'>Very<br> similar<br>(5)</span>"
+],
+min: 1,
+max: 5,
+step: 1,
+slider_start: 3,
+prompt: "<div style='margin-top: 40px;'></div>",
+require_movement: true,
+button_label: "Next Trial",
+trial_duration: 30000,
+slider_width: 400,
+css_classes: ['spaced-slider'],
+data: {
+  image1Path: jsPsych.timelineVariable('image1'),
+  image2Path: jsPsych.timelineVariable('image2'),
+  exp_trial_type: trial_type_info,
+  trial_type: jsPsych.timelineVariable('trial_type') || 'unknown',
+  exp_trial_number: jsPsych.timelineVariable('trial') || null
+},
+on_finish: function(data) {
+  data.keypress = null;
+  data.response_time = data.rt;
+  data.selected_similarity_rating = data.response;
+}
+}
+,
+      {
+        timeline: [timeout_conditional],
+        conditional_function: function () {
+          const lastTrialData = jsPsych.data.getLastTrialData().values()[0];
+          return lastTrialData && lastTrialData.response == null;
+        }
+      }
+    ],
+    timeline_variables: timelineVariables,
+    randomize_order: true
+  };
+}
+
+    // Here I am defining the training trials
+    var training_trial = "training_trial";
+    var training        = createExperimentBlock(training_trials, training_trial);
+
+    // Here I am creating my experiment blocks that are interleaved with the catch trials abd breaks
+    var exp_trial = "exp_trial";
+    var main_exp_block1 = createExperimentBlock(block1_stimuli,exp_trial);
+    var main_exp_block2 = createExperimentBlock(block2_stimuli,exp_trial);
+
+ // Giving information that participant managed to go through all exp. trials
+  var end_exp_trials = {
+      type: jsPsychInstructions,
+      pages: [
+      // informing participants that the main exp. part is over
+      '<p>Great, you have almost reached the end of the experiment. There won\'t be any more experiment trials.</p>'+
+      '<p>We just have one last question that we would like to ask you.</p>' +
+      '<p>Click on the next button to tell us about the things you payed attention to when answering how similar the images appear, and finish up your participation.</p>'],
+        show_clickable_nav: true,
+        post_trial_gap: 1000
+  };
+
+
+  // Expecially during piloting we want to know if participants felt encouraged to use a specific strategy to select the odd-one-out
+  // So, I am giving them the opportunity to tell me in case they did use a specific strategy
+  var feedback_strategy = {
+    type: jsPsychSurveyText,
+    questions: [
+    {prompt: '<p style="font-size:20px;">Which strategy did you use to judge if two images were similar? Please type in an answer to this question in the field below.</p>'}
+  ]
+  }
+// global end of experiment. This routine mostly manages the data saving and redirection to prolific
+  var end_experiment = {
+    type: jsPsychInstructions,
+    pages: [
+      // Thanking the participants and inform them that they will be redirected to Prolific shortly
+        '<p><strong>End Of Experiment</strong></p>' +
+        '<br>' +
+        '<p>Thank you for participating!</p>' +
+        '<p>You will shortly be redirected to Prolific to confirm the experiment has been completed (necessary for getting paid!).</p>' +
+        '<p>Please don\'t close this tab until you\'ve been redirected, thanks!</p>'
+    ],
+    show_clickable_nav: false,
+    allow_keys: false,
+    post_trial_gap: 1000,
+    on_start: async function(trial) {
+        // Mark the experiment as complete
+        jsPsych.data.addProperties({ experiment_complete: true });
+        // Add end time to the dataset
+        var endTime = (new Date()).toISOString().replace(/z|t/gi,' ').trim();
+        jsPsych.data.addProperties({ end_time: endTime });
+
+        // Merge interaction data with main experiment data. I am adding the interaction data about leaving fullscreen, etc. to the last trial
+        var interaction_data = jsPsych.data.getInteractionData();
+        jsPsych.data.get().addToLast({interaction_data: interaction_data.json()});
+
+        await saveData(jsPsych.data.get().values());
+        // This gives participants the chance to read the end screen before they get redirected.
+        await redirectAfterDelay(4000, "https://app.prolific.com/submissions/complete?cc=CPPY5SED");
+        // End the experiment - trigger the on_finish function in init jsPsych
+        jsPsych.endExperiment();
+    },
+  };
+   //remember to include the consent form!
+    var preparation_block = {
+        timeline:[consent,demographics_gender,demographics_age,preload,instructions].flat()
+    }
+    // Here I am defining the trial structure of the exp. After practice (6 trials), I am creating 2 blocks of 100 exp. trials that are interleaved with catch trials and breaks
+    var block1 = {
+        timeline:[training,fullscreen_reentry_conditional,end_of_practice,main_exp_block1,break_trial,main_exp_block2].flat()
+    }
+    var block2 = {
+        timeline:[end_exp_trials,feedback_strategy,end_experiment].flat()
+    }
+
+    timeline.push(preparation_block,block1,block2)
+
+
+    jsPsych.run(timeline)
+
+
+  }
+  main();
+
+  </script>
+</html>
