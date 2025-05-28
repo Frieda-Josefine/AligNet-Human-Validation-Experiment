@@ -67,6 +67,14 @@ Some jsPsych plugins were <strong>customized</strong> to support specific featur
 
 <hr>
 
+<h2>📊 Visualization (<code>/docs/plots</code>)</h2>
+
+<ul>
+  <li><code>Plots visualizing results</code>: Bar plot and illustrative image pairs with maximum AligNet vs. UnaligNet disagreement </li>
+</ul>
+
+<hr>
+
 <h2>🔧 Requirements</h2>
 
 <p>To run or edit the experiment locally:</p>
