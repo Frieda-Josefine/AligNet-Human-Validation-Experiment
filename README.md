@@ -23,9 +23,10 @@ In order to further ascertain the origin of the differences between the AligNet 
 <h2>📁 Repository Structure</h2>
 
 <pre><code>
+📁 experiment/    # Full experiment implementation (HTML, JS, stimuli, setup)
+📁 results/       # a .csv file containing the behavioral results and a .README of the relevant variables for analysis
 📁 analysis/      # Scripts and notebooks for data analysis and visualization
 📁 docs/          # Project documentation and manuscript-related materials
-📁 experiment/    # Full experiment implementation (HTML, JS, stimuli, setup)
 📄 LICENSE        # License file (MIT)
 📄 README.md      # This file
 </code></pre>
@@ -58,6 +59,18 @@ Some jsPsych plugins were <strong>customized</strong> to support specific featur
 </ul>
 
 <hr>
+
+<h2>📁 <code>results/</code></h2>
+<p>
+  This folder contains:
+</p>
+<ul>
+  <li><code>AligNet_Human_Validation_results.csv</code> – The cleaned dataset of behavioral responses from the online experiment. Subject IDs are anonymized (e.g., <code>subject_1</code>, <code>subject_2</code>).</li>
+  <li><code>.README</code> – A short description of the relevant variables included in the <code>.csv</code> file for statistical analysis and plotting.</li>
+</ul>
+<p>
+  The data was collected via the Prolific platform and includes only the fields required for reproducing the main and supplementary analyses.
+</p>
 
 <h2>📊 Analysis & Visualization (<code>/analysis/</code>)</h2>
 
